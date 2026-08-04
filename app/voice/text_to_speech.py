@@ -1,19 +1,30 @@
 import pyttsx3
 
 
-engine = pyttsx3.init()
+class TextToSpeech:
+
+    def __init__(self):
+
+        self.engine = pyttsx3.init()
+
+        voices = self.engine.getProperty("voices")
+
+        # Select voice
+        self.engine.setProperty(
+            "voice",
+            voices[0].id
+        )
+
+        self.engine.setProperty(
+            "rate",
+            170
+        )
 
 
-engine.setProperty(
-    "rate",
-    170
-)
+    def speak(self, text):
 
+        print("JARVIS:", text)
 
-def speak(text):
+        self.engine.say(text)
 
-    print("JARVIS:", text)
-
-    engine.say(text)
-
-    engine.runAndWait()
+        self.engine.runAndWait()
