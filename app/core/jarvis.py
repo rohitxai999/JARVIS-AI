@@ -2,6 +2,7 @@ from app.services.llm_service import LLMService
 from app.config.settings import ASSISTANT_NAME
 
 from app.core.memory_manager import MemoryManager
+from app.core.command_router import CommandRouter
 from app.tools.tool_manager import ToolManager
 
 
@@ -11,16 +12,19 @@ class Jarvis:
 
         self.llm = LLMService()
 
-        # Day 3 additions
+        # Memory system
         self.memory = MemoryManager()
+
+        # Tool system
         self.tools = ToolManager()
 
+        # Day 6: Command Router
+        self.router = CommandRouter(self.tools)
 
     def chat(self, message: str) -> str:
 
         if not message.strip():
             return "Please enter a message."
-
 
         # Save user message
         self.memory.add_conversation(
@@ -28,71 +32,23 @@ class Jarvis:
             message
         )
 
+        # Day 6: Route command through CommandRouter
+        response = self.router.route(message)
 
-        response = None
-
-
-        # Simple tool detection
-
-        lower_message = message.lower()
-
-
-        if "time" in lower_message:
-
-            tool = self.tools.get_tool(
-                "datetime"
-            )
-
-            response = (
-                f"The current time is "
-                f"{tool.current_time()}"
-            )
-
-
-        elif "date" in lower_message:
-
-            tool = self.tools.get_tool(
-                "datetime"
-            )
-
-            response = (
-                f"Today's date is "
-                f"{tool.current_date()}"
-            )
-
-
-        elif "cpu" in lower_message:
-
-            tool = self.tools.get_tool(
-                "system"
-            )
-
-            response = (
-                f"CPU usage is "
-                f"{tool.cpu_usage()}%"
-            )
-
-
-        # If no tool is used, use AI
-
+        # If no command/tool matched, use AI
         if response is None:
 
             response = self.llm.generate_response(
                 message
             )
 
-
         # Save assistant response
-
         self.memory.add_conversation(
             "assistant",
             response
         )
 
-
         return response
-
-
 
     def welcome(self):
 
