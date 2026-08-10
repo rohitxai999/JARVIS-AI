@@ -28,3 +28,4 @@ build/
 
 # ChromaDB
 chroma/
+voice.wav
