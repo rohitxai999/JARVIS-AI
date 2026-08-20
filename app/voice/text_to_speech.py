@@ -19,3 +19,18 @@ class TextToSpeech:
 
         self.engine.say(text)
         self.engine.runAndWait()
+
+
+def speak(text):
+    """
+    Backward-compatible module-level speech function.
+
+    Keeps older JARVIS voice tests and scripts working while
+    the main architecture uses the TextToSpeech class.
+    """
+
+    if not text:
+        return
+
+    tts = TextToSpeech()
+    tts.speak(text)
